@@ -507,3 +507,40 @@ font-size:18px;
 cursor:pointer;
 
   }
+.langBox{
+
+display:flex;
+
+justify-content:flex-end;
+
+margin-bottom:15px;
+
+}
+
+#langSelect{
+
+padding:8px 12px;
+
+font-size:15px;
+
+border:none;
+
+border-radius:10px;
+
+background:#ffffff;
+
+box-shadow:0 3px 10px rgba(0,0,0,.15);
+
+cursor:pointer;
+
+outline:none;
+
+transition:.2s;
+
+}
+
+#langSelect:hover{
+
+transform:scale(1.03);
+
+}
