@@ -2,6 +2,7 @@ const cards=document.getElementById("cards");
 const btn=document.getElementById("createBtn");
 const input=document.getElementById("faWord");
 const category=document.getElementById("category");
+const langSelect=document.getElementById("langSelect");
 const loading=document.getElementById("loading");
 const searchInput=document.getElementById("searchInput");
 const myWords=document.getElementById("myWords");
@@ -14,6 +15,17 @@ const quizContent=document.getElementById("quizContent");
 const startQuiz=document.getElementById("startQuiz");
 let data=JSON.parse(localStorage.getItem("flashcards")||"[]");
 let learned=JSON.parse(localStorage.getItem("learnedWords")||"[]");
+let currentLang=localStorage.getItem("language")||"en";
+
+langSelect.value=currentLang;
+
+langSelect.onchange=()=>{
+
+currentLang=langSelect.value;
+
+localStorage.setItem("language",currentLang);
+
+};
 
 render();
 renderLearned();
@@ -29,9 +41,8 @@ loading.style.display="block";
 try{
 
 const res=await fetch(
-"https://translate.googleapis.com/translate_a/single?client=gtx&sl=fa&tl=en&dt=t&q="+encodeURIComponent(fa)
+"https://translate.googleapis.com/translate_a/single?client=gtx&sl=fa&tl="+currentLang+"&dt=t&q="+encodeURIComponent(fa)
 );
-
 const json=await res.json();
 
 const en=json[0][0][0];
@@ -40,7 +51,8 @@ const card={
 id:Date.now(),
 fa,
 en,
-category:category.value
+category:category.value,
+lang:currentLang
 };
 
 data.unshift(card);
@@ -69,8 +81,14 @@ const keyword=searchInput.value.trim().toLowerCase();
 
 data
 .filter(item=>
+
+item.lang===currentLang &&
+
+(
 item.fa.toLowerCase().includes(keyword) ||
 item.en.toLowerCase().includes(keyword)
+)
+
 )
 .forEach(item=>{
 
@@ -108,7 +126,7 @@ speechSynthesis.cancel();
 
 const u=new SpeechSynthesisUtterance(item.en);
 
-u.lang="en-US";
+u.lang = currentLang==="de" ? "de-DE" : "en-US";
 u.rate=.9;
 
 speechSynthesis.speak(u);
@@ -156,6 +174,7 @@ function renderLearned(){
 myWords.innerHTML="";
 
 let list=learned;
+list=list.filter(x=>x.lang===currentLang);
 
 if(filterCategory.value!=="همه"){
 
@@ -200,7 +219,7 @@ speechSynthesis.cancel();
 
 const u=new SpeechSynthesisUtterance(item.en);
 
-u.lang="en-US";
+u.lang = currentLang==="de" ? "de-DE" : "en-US";
 u.rate=.9;
 
 speechSynthesis.speak(u);
@@ -376,7 +395,7 @@ speechSynthesis.cancel();
 
 const u=new SpeechSynthesisUtterance(btn.textContent);
 
-u.lang="en-US";
+u.lang = currentLang==="de" ? "de-DE" : "en-US";
 u.rate=0.9;
 
 speechSynthesis.speak(u);
